@@ -73,7 +73,7 @@ int main()
   if(!outFile.is_open())
   {return 1;}
 
-  const long long targetSize = 512LL * 1024 * 1024 * 1024;
+  const long long targetSize = 64LL * 1024 * 1024 * 1024;
   const string data = "trollface\n";
   const size_t dataSize = data.size();
 
